@@ -16,6 +16,17 @@ class Task extends Model
     use HasFactory, SoftDeletes;
 
     /**
+     * Mirror the column defaults, so a freshly created model carries them
+     * straight away instead of only after it is re-read from the database.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'priority' => TaskPriority::Medium->value,
+        'status' => TaskStatus::Todo->value,
+    ];
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
@@ -50,5 +61,19 @@ class Task extends Model
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
+    }
+
+    /**
+     * Whether the task's deadline has passed while it is still open.
+     *
+     * Due dates are day-granular, so a task is overdue only once the day itself
+     * has passed — something due today is not late yet. The dashboard's overdue
+     * query must stay in step with this definition.
+     */
+    public function isOverdue(): bool
+    {
+        return $this->due_date !== null
+            && $this->status !== TaskStatus::Done
+            && $this->due_date->isBefore(today());
     }
 }
