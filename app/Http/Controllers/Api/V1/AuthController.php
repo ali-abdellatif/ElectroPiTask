@@ -61,4 +61,17 @@ class AuthController extends Controller
     {
         return new UserResource($request->user());
     }
+
+    /**
+     * Revoke the token used for the current request, leaving the user's other
+     * tokens (issued to different devices) intact.
+     */
+    public function logout(Request $request): JsonResponse
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'message' => 'Logged out successfully.',
+        ]);
+    }
 }
