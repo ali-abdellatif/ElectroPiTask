@@ -102,6 +102,22 @@ class Task extends Model
     }
 
     /**
+     * Narrow to tasks that are past their due date and still open.
+     *
+     * This is the query-side twin of {@see self::isOverdue()}; the two
+     * definitions must stay identical, or a task can be flagged overdue in a
+     * listing while going uncounted on the dashboard.
+     *
+     * @param  Builder<Task>  $query
+     */
+    public function scopeOverdue(Builder $query): void
+    {
+        $query->whereNotNull($query->qualifyColumn('due_date'))
+            ->where($query->qualifyColumn('status'), '!=', TaskStatus::Done)
+            ->whereDate($query->qualifyColumn('due_date'), '<', today());
+    }
+
+    /**
      * Whether the task's deadline has passed while it is still open.
      *
      * Due dates are day-granular, so a task is overdue only once the day itself
