@@ -4,13 +4,13 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Concerns\ResolvesPageSize;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Task\IndexTaskRequest;
 use App\Http\Requests\Task\StoreTaskRequest;
 use App\Http\Requests\Task\UpdateTaskRequest;
 use App\Http\Resources\TaskResource;
 use App\Models\Project;
 use App\Models\Task;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\Response;
 
@@ -20,12 +20,17 @@ class TaskController extends Controller
 
     /**
      * List the tasks of a project the user owns, newest first.
+     *
+     * Filters compose: each scope is a no-op when its filter is absent, so any
+     * combination of them narrows the same query.
      */
-    public function index(Request $request, Project $project): AnonymousResourceCollection
+    public function index(IndexTaskRequest $request, Project $project): AnonymousResourceCollection
     {
         $this->authorize('view', $project);
 
         $tasks = $project->tasks()
+            ->withStatus($request->status())
+            ->withPriority($request->priority())
             ->latest()
             ->paginate($this->perPage($request));
 

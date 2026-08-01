@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Enums\TaskPriority;
 use App\Enums\TaskStatus;
 use Database\Factories\TaskFactory;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -61,6 +62,27 @@ class Task extends Model
     public function project(): BelongsTo
     {
         return $this->belongsTo(Project::class);
+    }
+
+    /**
+     * Narrow to a single status. A null filter is a no-op, so callers can apply
+     * it unconditionally instead of branching.
+     *
+     * @param  Builder<Task>  $query
+     */
+    public function scopeWithStatus(Builder $query, ?TaskStatus $status): void
+    {
+        $query->when($status, fn (Builder $q) => $q->where('status', $status));
+    }
+
+    /**
+     * Narrow to a single priority. A null filter is a no-op.
+     *
+     * @param  Builder<Task>  $query
+     */
+    public function scopeWithPriority(Builder $query, ?TaskPriority $priority): void
+    {
+        $query->when($priority, fn (Builder $q) => $q->where('priority', $priority));
     }
 
     /**
