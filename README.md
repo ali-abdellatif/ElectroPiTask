@@ -14,7 +14,7 @@ can never read or change another user's projects or tasks.
 | Language | PHP 8.2+ |
 | Auth | Laravel Sanctum (API tokens) |
 | Database | MySQL 8 (SQLite in-memory for tests) |
-| Testing | PHPUnit — 88 tests |
+| Testing | PHPUnit — 86 feature tests |
 | Style | Laravel Pint |
 
 ## Features
