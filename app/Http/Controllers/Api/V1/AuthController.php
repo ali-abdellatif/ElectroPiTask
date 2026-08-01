@@ -7,6 +7,7 @@ use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 class AuthController extends Controller
@@ -25,5 +26,13 @@ class AuthController extends Controller
                 'token' => $user->createToken('api')->plainTextToken,
             ],
         ], Response::HTTP_CREATED);
+    }
+
+    /**
+     * Return the currently authenticated user.
+     */
+    public function me(Request $request): UserResource
+    {
+        return new UserResource($request->user());
     }
 }
