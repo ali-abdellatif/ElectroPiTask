@@ -31,6 +31,7 @@ class TaskController extends Controller
         $tasks = $project->tasks()
             ->withStatus($request->status())
             ->withPriority($request->priority())
+            ->search($request->search())
             ->latest()
             ->paginate($this->perPage($request));
 

@@ -29,6 +29,7 @@ class IndexTaskRequest extends FormRequest
         return [
             'status' => ['sometimes', 'nullable', Rule::enum(TaskStatus::class)],
             'priority' => ['sometimes', 'nullable', Rule::enum(TaskPriority::class)],
+            'search' => ['sometimes', 'nullable', 'string', 'max:255'],
         ];
     }
 
@@ -40,5 +41,10 @@ class IndexTaskRequest extends FormRequest
     public function priority(): ?TaskPriority
     {
         return $this->enum('priority', TaskPriority::class);
+    }
+
+    public function search(): ?string
+    {
+        return $this->string('search')->trim()->value() ?: null;
     }
 }

@@ -86,6 +86,18 @@ class Task extends Model
     }
 
     /**
+     * Narrow to tasks whose title contains the given term. A blank term is a
+     * no-op. Any wildcards the client sends simply widen the match rather than
+     * being treated as literals.
+     *
+     * @param  Builder<Task>  $query
+     */
+    public function scopeSearch(Builder $query, ?string $term): void
+    {
+        $query->when(filled($term), fn (Builder $q) => $q->where('title', 'like', "%{$term}%"));
+    }
+
+    /**
      * Whether the task's deadline has passed while it is still open.
      *
      * Due dates are day-granular, so a task is overdue only once the day itself
