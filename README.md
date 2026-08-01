@@ -28,6 +28,8 @@ can never read or change another user's projects or tasks.
 - Form Request validation and API Resource responses throughout
 - Policies for ownership, consistent JSON errors, and correct HTTP status codes
 - Factories and a seeder with realistic sample data
+- Queued daily digest notifying users of their overdue tasks
+- OpenAPI 3.1 documentation generated from the code, served at `/docs/api`
 
 ## Requirements
 
@@ -491,6 +493,27 @@ the two can never disagree.
 ```
 
 The 404 message is deliberately generic — it never names the model class behind the route.
+
+## Interactive OpenAPI Docs
+
+With the app served locally, browse to:
+
+```
+http://127.0.0.1:8000/docs/api
+```
+
+The specification is generated from the code itself — Form Requests become request
+schemas, API Resources become response schemas, and the PHP enums become the documented
+value sets — so it cannot drift out of step with the implementation. Endpoints that need a
+token are marked as such; register and login are marked public, decided from the middleware
+each route actually carries.
+
+A committed snapshot lives at [docs/openapi.json](docs/openapi.json) (OpenAPI 3.1) for
+importing into other tools. Regenerate it with:
+
+```bash
+php artisan scramble:export --path=docs/openapi.json
+```
 
 ## Postman Collection
 
