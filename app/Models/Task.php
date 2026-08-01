@@ -68,11 +68,15 @@ class Task extends Model
      * Narrow to a single status. A null filter is a no-op, so callers can apply
      * it unconditionally instead of branching.
      *
+     * Columns are qualified because these scopes also run on the cross-project
+     * listing, which joins through `projects` — and that table has a `status`
+     * column of its own.
+     *
      * @param  Builder<Task>  $query
      */
     public function scopeWithStatus(Builder $query, ?TaskStatus $status): void
     {
-        $query->when($status, fn (Builder $q) => $q->where('status', $status));
+        $query->when($status, fn (Builder $q) => $q->where($q->qualifyColumn('status'), $status));
     }
 
     /**
@@ -82,7 +86,7 @@ class Task extends Model
      */
     public function scopeWithPriority(Builder $query, ?TaskPriority $priority): void
     {
-        $query->when($priority, fn (Builder $q) => $q->where('priority', $priority));
+        $query->when($priority, fn (Builder $q) => $q->where($q->qualifyColumn('priority'), $priority));
     }
 
     /**
@@ -94,7 +98,7 @@ class Task extends Model
      */
     public function scopeSearch(Builder $query, ?string $term): void
     {
-        $query->when(filled($term), fn (Builder $q) => $q->where('title', 'like', "%{$term}%"));
+        $query->when(filled($term), fn (Builder $q) => $q->where($q->qualifyColumn('title'), 'like', "%{$term}%"));
     }
 
     /**

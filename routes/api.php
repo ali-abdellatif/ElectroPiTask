@@ -15,6 +15,9 @@ Route::prefix('v1')->group(function () {
 
         Route::apiResource('projects', ProjectController::class);
 
+        // Every task the user owns, across all of their projects.
+        Route::get('tasks', [TaskController::class, 'all'])->name('tasks.all');
+
         // Shallow: creating and listing need the project for context, while a
         // task is addressable on its own once it exists.
         Route::apiResource('projects.tasks', TaskController::class)->shallow();

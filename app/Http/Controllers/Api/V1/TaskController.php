@@ -52,6 +52,27 @@ class TaskController extends Controller
             ->setStatusCode(Response::HTTP_CREATED);
     }
 
+    /**
+     * List every task the user owns, across all of their projects.
+     *
+     * Reuses the same request and scopes as the per-project listing — only the
+     * starting relation differs. Tasks under a soft-deleted project fall out
+     * here, because the relation joins through projects.
+     */
+    public function all(IndexTaskRequest $request): AnonymousResourceCollection
+    {
+        $tasks = $request->user()
+            ->tasks()
+            ->with('project')
+            ->withStatus($request->status())
+            ->withPriority($request->priority())
+            ->search($request->search())
+            ->latest('tasks.created_at')
+            ->paginate($this->perPage($request));
+
+        return TaskResource::collection($tasks);
+    }
+
     public function show(Task $task): TaskResource
     {
         $this->authorize('view', $task);
