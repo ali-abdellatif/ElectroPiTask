@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Http\Controllers\Concerns\ResolvesPageSize;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Project\StoreProjectRequest;
 use App\Http\Requests\Project\UpdateProjectRequest;
@@ -14,9 +15,7 @@ use Illuminate\Http\Response;
 
 class ProjectController extends Controller
 {
-    private const DEFAULT_PER_PAGE = 15;
-
-    private const MAX_PER_PAGE = 100;
+    use ResolvesPageSize;
 
     /**
      * List the authenticated user's projects, newest first.
@@ -67,21 +66,5 @@ class ProjectController extends Controller
         $project->delete();
 
         return response()->noContent();
-    }
-
-    /**
-     * Clamp the client-supplied page size to a sane range, so a caller cannot
-     * ask for every row at once. Anything non-numeric falls back to the default
-     * rather than collapsing to a single row.
-     */
-    private function perPage(Request $request): int
-    {
-        $perPage = $request->query('per_page');
-
-        if (! is_numeric($perPage)) {
-            return self::DEFAULT_PER_PAGE;
-        }
-
-        return max(1, min((int) $perPage, self::MAX_PER_PAGE));
     }
 }
