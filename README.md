@@ -31,7 +31,8 @@ can never read or change another user's projects or tasks.
 
 ## Requirements
 
-- PHP >= 8.2 with the `pdo_mysql`, `mbstring`, `openssl` and `sqlite3` extensions
+- PHP >= 8.2 with the `pdo_mysql`, `pdo_sqlite`, `mbstring` and `openssl` extensions
+  (`pdo_sqlite` is only needed to run the test suite)
 - Composer 2
 - MySQL 8 (or MariaDB 10.6+)
 
@@ -49,19 +50,25 @@ composer install
 cp .env.example .env
 php artisan key:generate
 
-# 4. Create an empty database, then point .env at it (see below)
-#    MySQL: CREATE DATABASE electropi_app CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+# 4. Create an empty database (adjust the credentials to match your setup)
+mysql -u root -p -e "CREATE DATABASE electropi_app CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;"
 
-# 5. Run the migrations and load the sample data
+# 5. Point .env at that database — see Environment Setup below.
+#    The defaults already assume electropi_app on 127.0.0.1 as root with no password,
+#    so you may not need to change anything.
+
+# 6. Run the migrations and load the sample data
 php artisan migrate --seed
 
-# 6. Serve
+# 7. Serve
 php artisan serve
 ```
 
 The API is then available at `http://127.0.0.1:8000/api/v1`.
 
-> On Windows the `cp` above is `copy .env.example .env`.
+> On Windows use `copy .env.example .env` instead of `cp`. If `mysql` is not on your PATH
+> (XAMPP, for example), call it with its full path — `D:\xampp\mysql\bin\mysql.exe` — or
+> create the database from phpMyAdmin.
 
 ## Environment Setup
 

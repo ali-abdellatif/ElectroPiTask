@@ -19,7 +19,8 @@ erDiagram
         timestamp email_verified_at "nullable"
         string password
         string remember_token "nullable"
-        timestamps created_at_updated_at
+        timestamp created_at
+        timestamp updated_at
     }
 
     PROJECTS {
@@ -29,7 +30,8 @@ erDiagram
         text description "nullable"
         string status "active | completed | archived"
         timestamp deleted_at "nullable, soft delete"
-        timestamps created_at_updated_at
+        timestamp created_at
+        timestamp updated_at
     }
 
     TASKS {
@@ -41,7 +43,8 @@ erDiagram
         string status "todo | in_progress | done"
         date due_date "nullable"
         timestamp deleted_at "nullable, soft delete"
-        timestamps created_at_updated_at
+        timestamp created_at
+        timestamp updated_at
     }
 ```
 
