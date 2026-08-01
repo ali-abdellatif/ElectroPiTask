@@ -16,6 +16,16 @@ class Project extends Model
     use HasFactory, SoftDeletes;
 
     /**
+     * Mirror the column default, so a freshly created model carries the status
+     * straight away instead of only after it is re-read from the database.
+     *
+     * @var array<string, mixed>
+     */
+    protected $attributes = [
+        'status' => ProjectStatus::Active->value,
+    ];
+
+    /**
      * The attributes that are mass assignable.
      *
      * @var list<string>
